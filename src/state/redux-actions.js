@@ -11,7 +11,8 @@ function addNewTask(){
 }
 
 const taskInitialState = {
-    noOfTasks: 0
+    noOfTasks: 0,
+    tasks:['1st task','2nd task','3rd task','4th task']
 }
 
 const addNewTaskReducer = (state = taskInitialState,action) => {
