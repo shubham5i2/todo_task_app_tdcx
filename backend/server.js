@@ -40,6 +40,19 @@ todoRoutes.route('/users').get(function(req,res){
     });
 });
 
+todoRoutes.route('/tasks').get(function(req,res){
+    console.log(req.body);
+    //let user = new Users(req.body);
+    Users.findOne({id:req.body.id},function(err,details){
+        if(err){
+            console.log('error occured');
+        }
+        else {
+            res.json(details.tasks);
+        }
+    })
+});
+
 app.use('/',todoRoutes);
 
 
