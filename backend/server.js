@@ -64,23 +64,23 @@ todoRoutes.route('/tasks').get(function(req,res){
             console.log('error occured');
         }
         else {
-            res.json(details.tasks);
+            res.send({status:200,data:details.tasks});
         }
     })
 });
 
 //add task route
 todoRoutes.route('/tasks').post(async function(req,res){
-    console.log(req.session);
+    //console.log(req.session);
     //let user = new Users(req.body);
-    let userDetails = await Users.findOne({id:req.body.id})
+    let userDetails = await Users.findOne({id:req.body.id || 1})
     console.log(userDetails);
     if(userDetails){
         let taskDetails = userDetails.tasks;
-        taskDetails.push({task_id:req.body.task_id,task_name:req.body.task_name,isTaskCompleted:req.body.isTaskCompleted});
+        taskDetails.push({task_id:req.body.task_id || 1909,task_name:req.body.task_name || 'The Final Task',isTaskCompleted:req.body.isTaskCompleted || false});
         userDetails.tasks = taskDetails;
-        Users.updateOne({id:req.body.id},userDetails).then(details=>{
-            res.send(details);
+        Users.updateOne({id:req.body.id || 1},userDetails).then(details=>{
+            res.send({status:200,data:details});
         });
     }
     
