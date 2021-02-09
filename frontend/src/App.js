@@ -4,6 +4,7 @@ import logo from './logo.svg';
 import './App.css';
 import Header from './components/Header';
 import CenterView from './components/Center-View';
+import {get,post} from 'superagent';
 const userLogin = false;
 class App extends React.Component {
   constructor(){
@@ -21,8 +22,8 @@ class App extends React.Component {
   }
   initiateLogin(id,name){
     console.log("Login initiated",id,name);
-    this.setState({
-      userLogin: true
+    post("http://localhost:4000/login",{id:id,name:name}).then((data)=>{
+      console.log(data);
     })
   }
   render(){
