@@ -18,6 +18,7 @@ connection.once('open', function() {
 
 const Users = require('./tasks.model');
 
+//login route
 todoRoutes.route('/login').post(function(req,res){
     console.log(req.body);
     let user = new Users(req.body);
@@ -54,6 +55,7 @@ todoRoutes.route('/dashboard').get(function(req,res){
     })
 });
 
+//tasks route added
 todoRoutes.route('/tasks').get(function(req,res){
     console.log(req.body);
     //let user = new Users(req.body);
