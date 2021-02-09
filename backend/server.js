@@ -1,4 +1,5 @@
 const express = require('express');
+//let session = require('express-session');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -20,10 +21,10 @@ const Users = require('./tasks.model');
 
 //login route
 todoRoutes.route('/login').post(function(req,res){
-    console.log(req.body);
     let user = new Users(req.body);
     user.save()
         .then(task => {
+            //req.session.userId = req.body.id;
             res.status(200).json({'msg': 'user added successfully'});
         })
         .catch(err => {
@@ -57,9 +58,8 @@ todoRoutes.route('/dashboard').get(function(req,res){
 
 //tasks route added
 todoRoutes.route('/tasks').get(function(req,res){
-    console.log(req.body);
     //let user = new Users(req.body);
-    Users.findOne({id:req.body.id},function(err,details){
+    Users.findOne({id:req.body.id||1},function(err,details){
         if(err){
             console.log('error occured');
         }
@@ -71,7 +71,7 @@ todoRoutes.route('/tasks').get(function(req,res){
 
 //add task route
 todoRoutes.route('/tasks').post(async function(req,res){
-    console.log(req.body);
+    console.log(req.session);
     //let user = new Users(req.body);
     let userDetails = await Users.findOne({id:req.body.id})
     console.log(userDetails);
