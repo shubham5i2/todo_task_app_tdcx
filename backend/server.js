@@ -15,7 +15,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/todos', { useNewUrlParser: true });
 const connection = mongoose.connection;
 
 connection.once('open', function() {
-    console.log("MongoDB database connection established successfully",todoRoutes);
+    console.log("MongoDB database connection established successfully");
 })
 
 todoRoutes.route('/tasks').get(function(req, res) {
@@ -58,6 +58,20 @@ todoRoutes.route('/task/:id').post(function(req, res) {
 
             task.save().then(task => {
                 res.json('Task updated');
+            })
+            .catch(err => {
+                res.status(400).send("Update not possible");
+            });
+    });
+});
+
+todoRoutes.route('/task/:id').delete(function(req, res) {
+    Tasks.findById(req.params.id, function(err, task) {
+        if (!task)
+            res.status(404).send('data is not found');
+        else
+            task.remove().then(task => {
+                res.json('Task Deleted');
             })
             .catch(err => {
                 res.status(400).send("Update not possible");
