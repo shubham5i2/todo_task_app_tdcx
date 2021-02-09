@@ -1,7 +1,9 @@
-import React from 'react';
+import * as React from "react";
+import * as PropTypes from "prop-types";
 import logo from './logo.svg';
 import './App.css';
 import Header from './components/Header';
+import CenterView from './components/Center-View';
 const userLogin = false;
 class App extends React.Component {
   constructor(){
@@ -10,8 +12,15 @@ class App extends React.Component {
       userLogin : false
     }
     this.makeUserLogin = this.makeUserLogin.bind(this);
+    this.initiateLogin = this.initiateLogin.bind(this);
   }
   makeUserLogin() {
+    this.setState({
+      userLogin: true
+    })
+  }
+  initiateLogin(id,name){
+    console.log("Login initiated",id,name);
     this.setState({
       userLogin: true
     })
@@ -20,8 +29,10 @@ class App extends React.Component {
     const {userLogin} = this.state;
     return (
       <div className="App">
-        <header className="App-header" onClick={this.makeUserLogin}>
+        <header className="App-header" >
           {userLogin && <Header />}  
+          {userLogin && <CenterView displayType={"no-tasks"}/>}
+          {!userLogin && <CenterView displayType={"login"} login={(id,name)=>{this.initiateLogin(id,name)}}/>}
         </header>
       </div>
     );
