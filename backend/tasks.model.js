@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+var ObjectId = Schema.ObjectId;
 
-let Tasks = new Schema({
+var Tasks = new Schema({
     task_id: {
         type: Number
     },
@@ -13,4 +14,14 @@ let Tasks = new Schema({
     },
 });
 
-module.exports = mongoose.model('Tasks', Tasks);
+var users = new Schema({
+    id: Number,
+    name: String,
+    tasks: [Tasks]
+});
+
+const Users = mongoose.model('users',users);
+module.exports=Users;
+
+//module.exports = mongoose.model('users',users);
+//module.exports = mongoose.model('Tasks', Tasks);
