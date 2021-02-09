@@ -40,6 +40,20 @@ todoRoutes.route('/users').get(function(req,res){
     });
 });
 
+//dashboard data route added
+todoRoutes.route('/dashboard').get(function(req,res){
+    console.log(req.body);
+    //let user = new Users(req.body);
+    Users.findOne({id:req.body.id},function(err,details){
+        if(err){
+            console.log('error occured');
+        }
+        else {
+            res.json(details);
+        }
+    })
+});
+
 todoRoutes.route('/tasks').get(function(req,res){
     console.log(req.body);
     //let user = new Users(req.body);
