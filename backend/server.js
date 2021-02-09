@@ -6,9 +6,6 @@ const mongoose = require('mongoose');
 const todoRoutes = express.Router();
 const PORT = 4000;
 
-let Tasks = require('./tasks.model');
-let Users = require('./tasks.model');
-
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -19,6 +16,31 @@ connection.once('open', function() {
     console.log("MongoDB database connection established successfully");
 })
 
+const Users = require('./tasks.model');
+
+todoRoutes.route('/login').post(function(req,res){
+    console.log(req.body);
+    let user = new Users(req.body);
+    user.save()
+        .then(task => {
+            res.status(200).json({'msg': 'user added successfully'});
+        })
+        .catch(err => {
+            res.status(400).send('adding new todo failed');
+        });
+});
+
+todoRoutes.route('/users').get(function(req,res){
+    Users.find(function(err, tasks) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.json(tasks);
+        }
+    });
+});
+
+app.use('/',todoRoutes);
 
 
 

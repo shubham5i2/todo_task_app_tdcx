@@ -20,8 +20,7 @@ var users = new Schema({
     tasks: [Tasks]
 });
 
-const Users = mongoose.model('users',users);
-module.exports=Users;
+module.exports=mongoose.model('users',users);
 
 //module.exports = mongoose.model('users',users);
 //module.exports = mongoose.model('Tasks', Tasks);
