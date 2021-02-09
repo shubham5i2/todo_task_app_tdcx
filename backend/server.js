@@ -25,7 +25,7 @@ todoRoutes.route('/login').post(function(req,res){
     user.save()
         .then(task => {
             //req.session.userId = req.body.id;
-            res.status(200).json({'msg': 'user added successfully'});
+            res.status(200).send({userInfo:task})
         })
         .catch(err => {
             res.status(400).send('adding new todo failed');
