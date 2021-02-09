@@ -41,7 +41,6 @@ export default class CenterView extends React.Component {
     render(){
         const {displayType} = this.props;
         const {formErrors} = this.state;
-        console.log(displayType);
         return (
             <div className="card-view">
                 {
