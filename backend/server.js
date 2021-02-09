@@ -69,6 +69,23 @@ todoRoutes.route('/tasks').get(function(req,res){
     })
 });
 
+//add task route
+todoRoutes.route('/tasks').post(async function(req,res){
+    console.log(req.body);
+    //let user = new Users(req.body);
+    let userDetails = await Users.findOne({id:req.body.id})
+    console.log(userDetails);
+    if(userDetails){
+        let taskDetails = userDetails.tasks;
+        taskDetails.push({task_id:req.body.task_id,task_name:req.body.task_name,isTaskCompleted:req.body.isTaskCompleted});
+        userDetails.tasks = taskDetails;
+        Users.updateOne({id:req.body.id},userDetails).then(details=>{
+            res.send(details);
+        });
+    }
+    
+});
+
 app.use('/',todoRoutes);
 
 
