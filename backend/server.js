@@ -28,7 +28,7 @@ todoRoutes.route('/login').post(async function(req,res){
     if(userDetails){
         if(userDetails.name === req.body.name) {
             localStorage.setItem('current-session',userDetails.id);
-            return res.status(200).send({user:userDetails});
+            return res.status(200).send({userInfo:userDetails});
         }
         else {
             return res.status(400).send({msg:'Id exists! Please provide name associated with id to login'});
