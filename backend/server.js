@@ -24,10 +24,15 @@ const Users = require('./tasks.model');
 
 //login route
 todoRoutes.route('/login').post(async function(req,res){
-    let userDetails = await Users.findOne({id:req.body.id,name:req.body.name});
+    let userDetails = await Users.findOne({id:req.body.id});
     if(userDetails){
-        localStorage.setItem('current-session',userDetails.id);
-        return res.status(200).send({user:userDetails});
+        if(userDetails.name === req.body.name) {
+            localStorage.setItem('current-session',userDetails.id);
+            return res.status(200).send({user:userDetails});
+        }
+        else {
+            return res.status(400).send({msg:'Id exists! Please provide name associated with id to login'});
+        }
     }
     else {
         let user = new Users(req.body);
