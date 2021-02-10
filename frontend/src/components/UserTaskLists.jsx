@@ -2,20 +2,50 @@ import * as React from 'react';
 import * as PropTypes from "prop-types";
 import { DataGrid } from '@material-ui/data-grid'; 
 import { del, put } from 'superagent';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 export default class UserTaskLists extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userTasks : {}
+            userTasks : {},
+            open: false
         }
         this.updateTask = this.updateTask.bind(this);
         this.deleteTask = this.deleteTask.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+        this.handleClickOpen = this.handleClickOpen.bind(this);
+        this.addNewTask = this.addNewTask.bind(this);
     }
     componentDidMount(){
         this.setState({
             userTasks: this.props
         })
+    }
+    handleClickOpen(){
+      this.setState({
+        open:true
+      })
+    }
+    handleClose(){
+      this.setState({
+        open: false
+      })
+    }
+    addNewTask(){
+      console.log(document.getElementById("name").value);
+      if(document.getElementById("name").value.trim().length>0){
+        this.props.addNewTask(document.getElementById("name").value);
+        this.setState({
+          open:false
+        })
+      }
     }
     updateTask(id,loggedId){
         put(`http://localhost:4000/tasks/${id}/`,{loggedId},(err,data) => {
@@ -99,12 +129,42 @@ export default class UserTaskLists extends React.Component {
           ];
         const rows = [];
         userTask.map((tasks)=>{
-            rows.push({"id":tasks._id || "task","taskname":tasks.task_name,"taskstatus":tasks.isTaskCompleted});
+            rows.push({"id":tasks._id || "task","taskname":tasks.task_name,"taskstatus":tasks.isTaskCompleted?'Completed':'Not Completed'});
         });
         return (
+            <>
+            <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
+              Add New Task
+            </Button>
+            <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+              <DialogTitle id="form-dialog-title">Add New Task</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  Add New Task
+                </DialogContentText>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="Task Name"
+                  type="text"
+                  required
+                  fullWidth
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={this.handleClose} color="primary">
+                  Cancel
+                </Button>
+                <Button onClick={this.addNewTask} color="primary">
+                  Add
+                </Button>
+              </DialogActions>
+            </Dialog>
             <div style={{ height: 400, width: '100%' }}>
                 <DataGrid rows={rows} columns={columns} pageSize={5} checkboxSelection />
             </div>
+            </>
         )
     }
 }

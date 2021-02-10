@@ -80,7 +80,7 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header" >
           {userLogin && <Header loggedIn={userName} logo={userlogo}/>}  
-          {userLogin && Array.isArray(userTasks) && userTasks.length > 0 && <UserTaskLists userTask={userTasks} loggedId={userId} taskUpdated={(isUpdated)=>this.updateTask(isUpdated)}/>}
+          {userLogin && Array.isArray(userTasks) && userTasks.length > 0 && <UserTaskLists userTask={userTasks} loggedId={userId} taskUpdated={(isUpdated)=>this.updateTask(isUpdated)} addNewTask={(taskName) => {this.initiateAddNewTask(taskName)}}/>}
           {userLogin && Array.isArray(userTasks) && userTasks.length === 0 && <CenterView displayType={"no-tasks"} loggedId={userId} addNewTask={(taskName) => {this.initiateAddNewTask(taskName)}}/>}
           {!userLogin && <CenterView displayType={"login"} login={(id,name)=>{this.initiateLogin(id,name)}}/>}
         </header>
