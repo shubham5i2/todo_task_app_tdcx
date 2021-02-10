@@ -13,10 +13,11 @@ class App extends React.Component {
       userLogin : false,
       userName: null,
       userTasks: null,
-      userId: null
+      userId: null,
     }
     this.makeUserLogin = this.makeUserLogin.bind(this);
     this.initiateLogin = this.initiateLogin.bind(this);
+    this.initiateAddNewTask = this.initiateAddNewTask.bind(this);
   }
   makeUserLogin() {
     this.setState({
@@ -26,6 +27,7 @@ class App extends React.Component {
   initiateLogin(id,name){
     console.log("Login initiated",id,name);
     post("http://localhost:4000/login",{id:id,name:name}).then((data)=>{
+      console.log(data.body);
       this.setState({
         userName: data.body.userInfo.name,
         userTasks: data.body.userInfo.tasks,
@@ -34,13 +36,25 @@ class App extends React.Component {
       })
     })
   }
+  initiateAddNewTask = async(name) =>{
+    console.log("add New task begins",name,this.state.userId);
+    await post("http://localhost:4000/tasks",{id:this.state.userId,task_id:21,task_name:name,isTaskCompleted:false});
+    get("http://localhost:4000/tasks").then((data)=>{
+      console.log(data.body.data.tasks);
+      this.setState({
+        userTasks: data.body.data.tasks
+      })
+    })
+  }
   render(){
     const {userLogin,userName,userTasks,userId} = this.state;
+    console.log(userTasks);
     return (
       <div className="App">
         <header className="App-header" >
           {userLogin && <Header loggedIn={userName}/>}  
-          {userLogin && Array.isArray(userTasks) && userTasks.length === 0 && <CenterView displayType={"no-tasks"} loggedId={userId}/>}
+          {userLogin && Array.isArray(userTasks) && userTasks.length > 0 && <CenterView displayType={"display-tasks"} loggedId={userId} />}
+          {userLogin && Array.isArray(userTasks) && userTasks.length === 0 && <CenterView displayType={"no-tasks"} loggedId={userId} addNewTask={(taskName) => {this.initiateAddNewTask(taskName)}}/>}
           {!userLogin && <CenterView displayType={"login"} login={(id,name)=>{this.initiateLogin(id,name)}}/>}
         </header>
       </div>

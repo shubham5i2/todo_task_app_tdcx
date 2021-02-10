@@ -8,10 +8,22 @@ export default class CenterView extends React.Component {
         this.state = {
             formErrors: {},
             id:"",
-            name:""
+            name:"",
+            taskname:"",
+            isAddTask:false
         }
         this.logIn = this.logIn.bind(this);
         this.updateValues = this.updateValues.bind(this);
+        this.addTask = this.addTask.bind(this);
+        this.addNewTask = this.addNewTask.bind(this);
+    }
+    addTask(){
+        this.setState({
+            isAddTask: true
+        })
+    }
+    addNewTask(){
+        this.props.addNewTask(this.state.taskname);
     }
     updateValues(prop,value){
         if(prop === 'id') {
@@ -22,6 +34,11 @@ export default class CenterView extends React.Component {
         else if(prop === 'name'){
             this.setState({
                 name:value
+            })
+        }
+        else if(prop === "task-name"){
+            this.setState({
+                taskname: value
             })
         }
     }
@@ -40,13 +57,19 @@ export default class CenterView extends React.Component {
     }
     render(){
         const {displayType} = this.props;
-        const {formErrors} = this.state;
+        const {formErrors,isAddTask} = this.state;
+        console.log(displayType);
         return (
             <div className="card-view">
                 {
-                    displayType === 'no-tasks' && <>
+                    !isAddTask && displayType === 'no-tasks' && <>
                         <p>No Task Exists</p>
-                        <button>New Task</button>
+                        <button onClick={this.addTask}>New Task</button>
+                    </>
+                }
+                {
+                    displayType === 'display-tasks' && <>
+                        <p>Here are the tasks</p>
                     </>
                 }
                 {
@@ -75,6 +98,23 @@ export default class CenterView extends React.Component {
                         <br/>
                         {this.state.formErrors && this.state.formErrors.msg ? <><span>{this.state.formErrors.msg}</span><br/></> : ''}
                         <button onClick={this.logIn}>Submit</button>
+                    </>
+                }
+                {
+                    isAddTask && <>
+                    <p>Add New Task</p>
+                        <input
+                            id={"task-name"}
+                            className="taskname"
+                            type={"text"}
+                            placeholder={"Task"}
+                            //title={typeof input.validationErrorMessage === 'undefined' ? message + key : (this.state[key].value?input.validationErrorMessage:"")}
+                            onChange={(evt) => {
+                                this.updateValues("task-name",evt.target.value);
+                            }}
+                        />
+                        <br/>
+                        <button onClick={this.addNewTask}>Submit</button>
                     </>
                 }
             </div>
