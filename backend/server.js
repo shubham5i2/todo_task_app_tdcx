@@ -1,9 +1,12 @@
+
+const {LocalStorage} = require('node-localstorage');
 const express = require('express');
 //let session = require('express-session');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+let localStorage = new LocalStorage('./scratch'); 
 const todoRoutes = express.Router();
 const PORT = 4000;
 
@@ -25,7 +28,8 @@ todoRoutes.route('/login').post(function(req,res){
     user.save()
         .then(task => {
             //req.session.userId = req.body.id;
-            res.status(200).json({'msg': 'user added successfully'});
+            localStorage.setItem('current-session',task.id);
+            res.status(200).send({userInfo:task})
         })
         .catch(err => {
             res.status(400).send('adding new todo failed');
@@ -59,12 +63,14 @@ todoRoutes.route('/dashboard').get(function(req,res){
 //tasks route added
 todoRoutes.route('/tasks').get(function(req,res){
     //let user = new Users(req.body);
-    Users.findOne({id:req.body.id||1},function(err,details){
+    let currentSession = localStorage.getItem('current-session');
+    console.log("details of the session",currentSession);
+    Users.findOne({id:currentSession},function(err,details){
         if(err){
             console.log('error occured');
         }
         else {
-            res.send({status:200,data:details.tasks});
+            res.send({status:200,data:details});
         }
     })
 });
@@ -73,13 +79,13 @@ todoRoutes.route('/tasks').get(function(req,res){
 todoRoutes.route('/tasks').post(async function(req,res){
     //console.log(req.session);
     //let user = new Users(req.body);
-    let userDetails = await Users.findOne({id:req.body.id || 1})
-    console.log(userDetails);
+    let userDetails = await Users.findOne({id:req.body.id})
+    //console.log(userDetails);
     if(userDetails){
         let taskDetails = userDetails.tasks;
-        taskDetails.push({task_id:req.body.task_id || 1909,task_name:req.body.task_name || 'The Final Task',isTaskCompleted:req.body.isTaskCompleted || false});
+        taskDetails.push({task_id:req.body.task_id,task_name:req.body.task_name,isTaskCompleted:req.body.isTaskCompleted});
         userDetails.tasks = taskDetails;
-        Users.updateOne({id:req.body.id || 1},userDetails).then(details=>{
+        Users.updateOne({id:req.body.id},userDetails).then(details=>{
             res.send({status:200,data:details});
         });
     }

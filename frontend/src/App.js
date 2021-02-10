@@ -1,25 +1,65 @@
+import * as React from "react";
+import * as PropTypes from "prop-types";
 import logo from './logo.svg';
 import './App.css';
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Header from './components/Header';
+import CenterView from './components/Center-View';
+import {get,post} from 'superagent';
+const userLogin = false;
+class App extends React.Component {
+  constructor(){
+    super();
+    this.state = {
+      userLogin : false,
+      userName: null,
+      userTasks: null,
+      userId: null,
+    }
+    this.makeUserLogin = this.makeUserLogin.bind(this);
+    this.initiateLogin = this.initiateLogin.bind(this);
+    this.initiateAddNewTask = this.initiateAddNewTask.bind(this);
+  }
+  makeUserLogin() {
+    this.setState({
+      userLogin: true
+    })
+  }
+  initiateLogin(id,name){
+    console.log("Login initiated",id,name);
+    post("http://localhost:4000/login",{id:id,name:name}).then((data)=>{
+      console.log(data.body);
+      this.setState({
+        userName: data.body.userInfo.name,
+        userTasks: data.body.userInfo.tasks,
+        userId: data.body.userInfo.id,
+        userLogin: true
+      })
+    })
+  }
+  initiateAddNewTask = async(name) =>{
+    console.log("add New task begins",name,this.state.userId);
+    await post("http://localhost:4000/tasks",{id:this.state.userId,task_id:21,task_name:name,isTaskCompleted:false});
+    get("http://localhost:4000/tasks").then((data)=>{
+      console.log(data.body.data.tasks);
+      this.setState({
+        userTasks: data.body.data.tasks
+      })
+    })
+  }
+  render(){
+    const {userLogin,userName,userTasks,userId} = this.state;
+    console.log(userTasks);
+    return (
+      <div className="App">
+        <header className="App-header" >
+          {userLogin && <Header loggedIn={userName}/>}  
+          {userLogin && Array.isArray(userTasks) && userTasks.length > 0 && <CenterView displayType={"display-tasks"} loggedId={userId} />}
+          {userLogin && Array.isArray(userTasks) && userTasks.length === 0 && <CenterView displayType={"no-tasks"} loggedId={userId} addNewTask={(taskName) => {this.initiateAddNewTask(taskName)}}/>}
+          {!userLogin && <CenterView displayType={"login"} login={(id,name)=>{this.initiateLogin(id,name)}}/>}
+        </header>
+      </div>
+    );
+  }
 }
 
 export default App;
