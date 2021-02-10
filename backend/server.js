@@ -23,17 +23,24 @@ connection.once('open', function() {
 const Users = require('./tasks.model');
 
 //login route
-todoRoutes.route('/login').post(function(req,res){
-    let user = new Users(req.body);
-    user.save()
-        .then(task => {
-            //req.session.userId = req.body.id;
-            localStorage.setItem('current-session',task.id);
-            res.status(200).send({userInfo:task})
-        })
-        .catch(err => {
-            res.status(400).send('adding new todo failed');
-        });
+todoRoutes.route('/login').post(async function(req,res){
+    let userDetails = await Users.findOne({id:req.body.id,name:req.body.name});
+    if(userDetails){
+        localStorage.setItem('current-session',userDetails.id);
+        return res.status(200).send({user:userDetails});
+    }
+    else {
+        let user = new Users(req.body);
+        user.save()
+            .then(task => {
+                //req.session.userId = req.body.id;
+                localStorage.setItem('current-session',task.id);
+                res.status(200).send({msg:'New User Created',userInfo:task})
+            })
+            .catch(err => {
+                res.status(400).send('adding new User failed');
+            });
+    }
 });
 
 todoRoutes.route('/users').get(function(req,res){
