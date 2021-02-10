@@ -5,6 +5,7 @@ import './App.css';
 import Header from './components/Header';
 import CenterView from './components/Center-View';
 import {get,post} from 'superagent';
+import UserTaskLists from './components/UserTaskLists';
 const userLogin = false;
 class App extends React.Component {
   constructor(){
@@ -53,7 +54,7 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header" >
           {userLogin && <Header loggedIn={userName}/>}  
-          {userLogin && Array.isArray(userTasks) && userTasks.length > 0 && <CenterView displayType={"display-tasks"} loggedId={userId} />}
+          {userLogin && Array.isArray(userTasks) && userTasks.length > 0 && <UserTaskLists userTask={userTasks}/>}
           {userLogin && Array.isArray(userTasks) && userTasks.length === 0 && <CenterView displayType={"no-tasks"} loggedId={userId} addNewTask={(taskName) => {this.initiateAddNewTask(taskName)}}/>}
           {!userLogin && <CenterView displayType={"login"} login={(id,name)=>{this.initiateLogin(id,name)}}/>}
         </header>
