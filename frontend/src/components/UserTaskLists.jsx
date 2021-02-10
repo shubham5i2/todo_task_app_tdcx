@@ -1,13 +1,44 @@
 import * as React from 'react';
 import * as PropTypes from "prop-types";
 import { DataGrid } from '@material-ui/data-grid'; 
+import { del, put } from 'superagent';
 
 export default class UserTaskLists extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            userTasks : {}
+        }
+        this.updateTask = this.updateTask.bind(this);
+        this.deleteTask = this.deleteTask.bind(this);
+    }
+    componentDidMount(){
+        this.setState({
+            userTasks: this.props
+        })
+    }
+    updateTask(id,loggedId){
+        put(`http://localhost:4000/tasks/${id}/`,{loggedId},(err,data) => {
+            if(err){
+                console.log("error occured")
+            }
+            else {
+              this.props.taskUpdated(true);
+            }
+        })
+    }
+    deleteTask(id,loggedId){
+      del(`http://localhost:4000/tasks/${id}/`,{loggedId},(err,data)=>{
+        if(err){
+          console.log("error occured");
+        }
+        else {
+          this.props.taskUpdated(true);
+        }
+      })
     }
     render(){
-        const {userTask} = this.props;
+        const {userTask,loggedId} = this.props;
         const columns = [
             { field: 'id', headerName: 'ID', width: 70 },
             { field: 'taskname', headerName: 'Name', width: 130 },
@@ -32,6 +63,7 @@ export default class UserTaskLists extends React.Component {
                       thisRow[f] = params.getValue(f);
                     });
                     console.log(thisRow);
+                    this.updateTask(thisRow.id,loggedId);
                     //return alert(JSON.stringify(thisRow, null, 4));
                   };
             
@@ -57,7 +89,7 @@ export default class UserTaskLists extends React.Component {
                     fields.forEach((f) => {
                       thisRow[f] = params.getValue(f);
                     });
-                    console.log(thisRow);
+                    this.deleteTask(thisRow.id,loggedId);
                     //return alert(JSON.stringify(thisRow, null, 4));
                   };
             

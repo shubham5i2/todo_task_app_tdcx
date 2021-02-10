@@ -19,7 +19,9 @@ class App extends React.Component {
     this.makeUserLogin = this.makeUserLogin.bind(this);
     this.initiateLogin = this.initiateLogin.bind(this);
     this.initiateAddNewTask = this.initiateAddNewTask.bind(this);
-    this.checkUserSession();
+    this.updateTask = this.updateTask.bind(this);
+    this.getUpdatedTasks = this.getUpdatedTasks.bind(this);
+    //this.checkUserSession();
   }
   checkUserSession(){
     get("http://localhost:4000/").then((data)=>{
@@ -58,6 +60,19 @@ class App extends React.Component {
       })
     })
   }
+  getUpdatedTasks(){
+    get("http://localhost:4000/tasks").then((data)=>{
+      console.log(data.body.data.tasks);
+      this.setState({
+        userTasks: data.body.data.tasks
+      })
+    })
+  }
+  updateTask(isUpdated) {
+    if(isUpdated){
+      this.getUpdatedTasks();
+    }
+  }
   render(){
     const {userLogin,userName,userTasks,userId} = this.state;
     console.log(userTasks);
@@ -65,7 +80,7 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header" >
           {userLogin && <Header loggedIn={userName} logo={userlogo}/>}  
-          {userLogin && Array.isArray(userTasks) && userTasks.length > 0 && <UserTaskLists userTask={userTasks}/>}
+          {userLogin && Array.isArray(userTasks) && userTasks.length > 0 && <UserTaskLists userTask={userTasks} loggedId={userId} taskUpdated={(isUpdated)=>this.updateTask(isUpdated)}/>}
           {userLogin && Array.isArray(userTasks) && userTasks.length === 0 && <CenterView displayType={"no-tasks"} loggedId={userId} addNewTask={(taskName) => {this.initiateAddNewTask(taskName)}}/>}
           {!userLogin && <CenterView displayType={"login"} login={(id,name)=>{this.initiateLogin(id,name)}}/>}
         </header>
