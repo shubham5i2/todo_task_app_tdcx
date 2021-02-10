@@ -6,7 +6,6 @@ import Header from './components/Header';
 import CenterView from './components/Center-View';
 import {get,post} from 'superagent';
 import UserTaskLists from './components/UserTaskLists';
-const userLogin = false;
 class App extends React.Component {
   constructor(){
     super();
@@ -19,6 +18,17 @@ class App extends React.Component {
     this.makeUserLogin = this.makeUserLogin.bind(this);
     this.initiateLogin = this.initiateLogin.bind(this);
     this.initiateAddNewTask = this.initiateAddNewTask.bind(this);
+    this.checkUserSession();
+  }
+  checkUserSession(){
+    get("http://localhost:4000/").then((data)=>{
+      this.setState({
+        userName: data.body.userInfo.name,
+        userTasks: data.body.userInfo.tasks,
+        userId: data.body.userInfo.id,
+        userLogin: true
+      })
+    })
   }
   makeUserLogin() {
     this.setState({
