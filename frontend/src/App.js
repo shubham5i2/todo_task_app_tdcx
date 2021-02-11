@@ -26,37 +26,26 @@ class App extends React.Component {
     this.logoutUser = this.logoutUser.bind(this);
     //this.checkUserSession();
   }
-  checkLoginStatus(){
-    axios('http://localhost:4000/checkStatus',{withCredentials:true}).then((resp)=>{
-      console.log(resp);
-    }).catch((err)=>{
-      console.log(err);
-    })
-  }
+
   componentDidMount(){
     let getExisting = localStorage.getItem("userId");
-    try{
-      let userInfo = JSON.parse(getExisting);
-      if(userInfo && userInfo.id!=null){
-        this.setState({
-          userName: userInfo.name,
-          userTasks: userInfo.tasks,
-          userId: userInfo.id,
-          userLogin: true
-        })
-      }
-      else {
-        this.setState({
-          userLogin: false
-        })
-      }
+    console.log(getExisting);
+    if(getExisting){
+      post("http://localhost:4000/login",{id:getExisting,sessionExist:true}).then((data)=>{
+      localStorage.setItem("userId",data.body.userInfo.id);
+      this.setState({
+        userName: data.body.userInfo.name,
+        userTasks: data.body.userInfo.tasks,
+        userId: data.body.userInfo.id,
+        userLogin: true
+      })
+    })
     }
-    catch(e){
+    else {
       this.setState({
         userLogin: false
       })
     }
-    
   }
   logoutUser(id){
     this.setState({
@@ -71,7 +60,7 @@ class App extends React.Component {
   initiateLogin(id,name){
     console.log("Login initiated",id,name);
     post("http://localhost:4000/login",{id:id,name:name}).then((data)=>{
-      localStorage.setItem("userId",JSON.stringify(data.body.userInfo));
+      localStorage.setItem("userId",data.body.userInfo.id);
       this.setState({
         userName: data.body.userInfo.name,
         userTasks: data.body.userInfo.tasks,
@@ -91,7 +80,7 @@ class App extends React.Component {
     })
   }
   getUpdatedTasks(){
-    get("http://localhost:4000/tasks").then((data)=>{
+    get("http://localhost:4000/tasks",{id:localStorage.getItem("userId")}).then((data)=>{
       console.log(data.body.data.tasks);
       this.setState({
         userTasks: data.body.data.tasks
@@ -99,13 +88,13 @@ class App extends React.Component {
     })
   }
   updateTask(isUpdated) {
+    console.log(isUpdated);
     if(isUpdated){
       this.getUpdatedTasks();
     }
   }
   render(){
     const {userLogin,userName,userTasks,userId} = this.state;
-    console.log(userTasks);
     return (
       <div className="App">
         <header className="App-header" >

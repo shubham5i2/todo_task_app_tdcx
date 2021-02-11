@@ -22,6 +22,7 @@ connection.once('open', function() {
 
 const Users = require('./tasks.model');
 
+var currentId = null;
 //login route
 todoRoutes.route('/').get(async function(req,res){
     let currentSession = localStorage.getItem('current-session');
@@ -42,7 +43,11 @@ todoRoutes.route('/login').post(async function(req,res){
     let userDetails = await Users.findOne({id:req.body.id});
     if(userDetails){
         if(userDetails.name === req.body.name) {
-            localStorage.setItem('current-session',userDetails.id);
+            currentId = req.body.id;
+            return res.status(200).send({userInfo:userDetails});
+        }
+        else if(req.body.sessionExist) {
+            currentId = req.body.id;
             return res.status(200).send({userInfo:userDetails});
         }
         else {
@@ -54,7 +59,7 @@ todoRoutes.route('/login').post(async function(req,res){
         user.save()
             .then(task => {
                 //req.session.userId = req.body.id;
-                localStorage.setItem('current-session',task.id);
+                currentId = req.body.id;
                 res.status(200).send({msg:'New User Created',userInfo:task})
             })
             .catch(err => {
@@ -90,9 +95,7 @@ todoRoutes.route('/dashboard').get(function(req,res){
 //tasks route added
 todoRoutes.route('/tasks').get(function(req,res){
     //let user = new Users(req.body);
-    let currentSession = localStorage.getItem('current-session');
-    console.log("details of the session",currentSession);
-    Users.findOne({id:currentSession},function(err,details){
+    Users.findOne({id:currentId},function(err,details){
         if(err){
             console.log('error occured');
         }
@@ -122,6 +125,7 @@ todoRoutes.route('/tasks').post(async function(req,res){
 //update task routes
 todoRoutes.route('/tasks/:id').put(async function(req,res){
     console.log(req.body,req.params);
+    currentId = req.body.loggedId;
     let userDetails = await Users.findOne({id:req.body.loggedId});
     let taskExists = [];//userDetails.tasks.filter(item=>item._id==req.params.id);
     if(userDetails && userDetails.tasks && userDetails.tasks.length>0){
@@ -150,6 +154,7 @@ todoRoutes.route('/tasks/:id').put(async function(req,res){
 //delete task routes
 todoRoutes.route('/tasks/:id').delete(async function(req,res){
     console.log(req.body,req.params);
+    currentId = req.body.loggedId;
     let userDetails = await Users.findOne({id:req.body.loggedId});
     let taskExists = [];//userDetails.tasks.filter(item=>item._id==req.params.id);
     if(userDetails && userDetails.tasks && userDetails.tasks.length>0){
