@@ -22,7 +22,7 @@ export default class Dashboard extends React.Component {
         const completed = taskInfo.filter(item=>item.isTaskCompleted===true);
         console.log(completed);
         return (
-            <div class={"info-cards"}>
+            <div className={"info-cards"}>
                 <Card>
                     <CardContent>
                     <Typography variant="h5" component="h2">

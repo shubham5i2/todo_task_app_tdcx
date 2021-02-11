@@ -97,7 +97,9 @@ export default class UserTaskLists extends React.Component {
                     //return alert(JSON.stringify(thisRow, null, 4));
                   };
             
-                  return <button onClick={onClick}>Modify State</button>;
+                  return (<Button variant="outlined" color="primary" onClick={onClick}>
+                            Modify State
+                          </Button>)
                 }
               },
               {
@@ -123,7 +125,9 @@ export default class UserTaskLists extends React.Component {
                     //return alert(JSON.stringify(thisRow, null, 4));
                   };
             
-                  return <button onClick={deleteTask}>Delete</button>;
+                  return (<Button variant="outlined" color="primary" onClick={deleteTask}>
+                            Delete
+                          </Button>)
                 }
               },
           ];
