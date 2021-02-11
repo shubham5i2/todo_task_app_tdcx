@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
-import '../stylesheets/CenterView.css';
+import '../stylesheets/CenterView.css'
 
 export default class CenterView extends React.Component {
     constructor(props){
@@ -97,7 +97,7 @@ export default class CenterView extends React.Component {
                         />
                         <br/>
                         {this.state.formErrors && this.state.formErrors.msg ? <><span>{this.state.formErrors.msg}</span><br/></> : ''}
-                        <button onClick={this.logIn}>Submit</button>
+                        <button className={"loginButton"} onClick={this.logIn}>Submit</button>
                     </>
                 }
                 {

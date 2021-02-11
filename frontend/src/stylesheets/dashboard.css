@@ -14,6 +14,10 @@
     width: 100px;
 }
 
-.MuiCardContent-root h2 {
+.MuiCardContent-root h2{
+    text-align: initial;
+}
+
+.MuiCardContent-root p{
     text-align: initial;
 }

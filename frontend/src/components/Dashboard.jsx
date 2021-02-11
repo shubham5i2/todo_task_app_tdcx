@@ -20,7 +20,8 @@ export default class Dashboard extends React.Component {
         const {taskInfo} = this.props;
         console.log(taskInfo);
         const completed = taskInfo.filter(item=>item.isTaskCompleted===true);
-        console.log(completed);
+        const percentage = (completed.length/taskInfo.length)*100;
+        const tasksToDisplay = taskInfo.slice(0,3).map(item=>{return <li>{item.task_name}</li>})
         return (
             <div className={"info-cards"}>
                 <Card>
@@ -40,8 +41,7 @@ export default class Dashboard extends React.Component {
                         Latest Tasks
                     </Typography>
                     <Typography variant="body2" component="p">
-                        {completed.length} completed out of {taskInfo.length}
-                        <br />
+                        {tasksToDisplay}
                     </Typography>
                     </CardContent>
                 </Card>
@@ -51,7 +51,7 @@ export default class Dashboard extends React.Component {
                         Progress
                     </Typography>
                     <CircularProgressbar
-                        value={25}
+                        value={percentage}
                         strokeWidth={50}
                         styles={buildStyles({
                         strokeLinecap: "butt"
