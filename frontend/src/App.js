@@ -25,15 +25,23 @@ class App extends React.Component {
     this.logoutUser = this.logoutUser.bind(this);
     //this.checkUserSession();
   }
-  checkUserSession(){
-    get("http://localhost:4000/").then((data)=>{
-      this.setState({
-        userName: data.body.userInfo.name,
-        userTasks: data.body.userInfo.tasks,
-        userId: data.body.userInfo.id,
-        userLogin: true
+  componentWillMount(){
+      get("http://localhost:4000/").then((data)=>{
+        console.log(data.body.userInfo);
+        if(data.body.userInfo === null) {
+          this.setState({
+            userLogin: false
+          })
+        }
+        else{
+          this.setState({
+            userName: data.body.userInfo.name,
+            userTasks: data.body.userInfo.tasks,
+            userId: data.body.userInfo.id,
+            userLogin: true
+          })
+        }
       })
-    })
   }
   logoutUser(id){
     this.setState({
@@ -87,7 +95,7 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header" >
           {userLogin && <Header loggedIn={userName} logo={userlogo} logout={()=>{this.logoutUser(userId)}}/>}
-          {userLogin && <Dashboard />}  
+          {userLogin && <Dashboard taskInfo={userTasks}/>}  
           {userLogin && Array.isArray(userTasks) && userTasks.length > 0 && <UserTaskLists userTask={userTasks} loggedId={userId} taskUpdated={(isUpdated)=>this.updateTask(isUpdated)} addNewTask={(taskName) => {this.initiateAddNewTask(taskName)}}/>}
           {userLogin && Array.isArray(userTasks) && userTasks.length === 0 && <CenterView displayType={"no-tasks"} loggedId={userId} addNewTask={(taskName) => {this.initiateAddNewTask(taskName)}}/>}
           {!userLogin && <CenterView displayType={"login"} login={(id,name)=>{this.initiateLogin(id,name)}}/>}
