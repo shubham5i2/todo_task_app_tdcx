@@ -3,7 +3,13 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import { CircularProgressbar } from 'react-circular-progressbar';
+import {
+  CircularProgressbar,
+  CircularProgressbarWithChildren,
+  buildStyles
+} from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+
 import 'react-circular-progressbar/dist/styles.css';
 export default class Dashboard extends React.Component {
     constructor(props) {
@@ -15,8 +21,8 @@ export default class Dashboard extends React.Component {
         const completed = taskInfo.filter(item=>item.isTaskCompleted===true);
         console.log(completed);
         return (
-            <div>
-                <Card>
+            <div style={{display:"grid",marginTop:"45px"}}>
+                <Card style={{height:"25px"}}>
                     <CardContent>
                     <Typography variant="h5" component="h2">
                         Task Overview
@@ -43,7 +49,13 @@ export default class Dashboard extends React.Component {
                     <Typography variant="h5" component="h2">
                         Progress
                     </Typography>
-                    <CircularProgressbar value={66} text={`${66}%`} />;
+                    <CircularProgressbar
+                        value={25}
+                        strokeWidth={50}
+                        styles={buildStyles({
+                        strokeLinecap: "butt"
+                        })}
+                        />
                     </CardContent>
                 </Card>
             </div>

@@ -8,6 +8,7 @@ import CenterView from './components/Center-View';
 import {get,post} from 'superagent';
 import UserTaskLists from './components/UserTaskLists';
 import Dashboard from './components/Dashboard';
+import axios from 'axios';
 class App extends React.Component {
   constructor(){
     super();
@@ -25,23 +26,37 @@ class App extends React.Component {
     this.logoutUser = this.logoutUser.bind(this);
     //this.checkUserSession();
   }
-  componentWillMount(){
-      get("http://localhost:4000/").then((data)=>{
-        console.log(data.body.userInfo);
-        if(data.body.userInfo === null) {
-          this.setState({
-            userLogin: false
-          })
-        }
-        else{
-          this.setState({
-            userName: data.body.userInfo.name,
-            userTasks: data.body.userInfo.tasks,
-            userId: data.body.userInfo.id,
-            userLogin: true
-          })
-        }
+  checkLoginStatus(){
+    axios('http://localhost:4000/checkStatus',{withCredentials:true}).then((resp)=>{
+      console.log(resp);
+    }).catch((err)=>{
+      console.log(err);
+    })
+  }
+  componentDidMount(){
+    let getExisting = localStorage.getItem("userId");
+    try{
+      let userInfo = JSON.parse(getExisting);
+      if(userInfo && userInfo.id!=null){
+        this.setState({
+          userName: userInfo.name,
+          userTasks: userInfo.tasks,
+          userId: userInfo.id,
+          userLogin: true
+        })
+      }
+      else {
+        this.setState({
+          userLogin: false
+        })
+      }
+    }
+    catch(e){
+      this.setState({
+        userLogin: false
       })
+    }
+    
   }
   logoutUser(id){
     this.setState({
@@ -56,7 +71,7 @@ class App extends React.Component {
   initiateLogin(id,name){
     console.log("Login initiated",id,name);
     post("http://localhost:4000/login",{id:id,name:name}).then((data)=>{
-      console.log(data.body);
+      localStorage.setItem("userId",JSON.stringify(data.body.userInfo));
       this.setState({
         userName: data.body.userInfo.name,
         userTasks: data.body.userInfo.tasks,
@@ -95,7 +110,7 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header" >
           {userLogin && <Header loggedIn={userName} logo={userlogo} logout={()=>{this.logoutUser(userId)}}/>}
-          {userLogin && <Dashboard taskInfo={userTasks}/>}  
+          {userLogin && Array.isArray(userTasks) && userTasks.length > 0 && <Dashboard taskInfo={userTasks}/>}  
           {userLogin && Array.isArray(userTasks) && userTasks.length > 0 && <UserTaskLists userTask={userTasks} loggedId={userId} taskUpdated={(isUpdated)=>this.updateTask(isUpdated)} addNewTask={(taskName) => {this.initiateAddNewTask(taskName)}}/>}
           {userLogin && Array.isArray(userTasks) && userTasks.length === 0 && <CenterView displayType={"no-tasks"} loggedId={userId} addNewTask={(taskName) => {this.initiateAddNewTask(taskName)}}/>}
           {!userLogin && <CenterView displayType={"login"} login={(id,name)=>{this.initiateLogin(id,name)}}/>}
