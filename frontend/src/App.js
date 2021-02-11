@@ -48,6 +48,7 @@ class App extends React.Component {
     }
   }
   logoutUser(id){
+    localStorage.setItem("userId",null);
     this.setState({
       userLogin: false
     })
