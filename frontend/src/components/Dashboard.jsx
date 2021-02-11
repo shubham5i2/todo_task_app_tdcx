@@ -11,6 +11,7 @@ import {
 import "react-circular-progressbar/dist/styles.css";
 
 import 'react-circular-progressbar/dist/styles.css';
+import '../stylesheets/dashboard.css';
 export default class Dashboard extends React.Component {
     constructor(props) {
         super(props);
@@ -21,8 +22,8 @@ export default class Dashboard extends React.Component {
         const completed = taskInfo.filter(item=>item.isTaskCompleted===true);
         console.log(completed);
         return (
-            <div style={{display:"grid",marginTop:"45px"}}>
-                <Card style={{height:"25px"}}>
+            <div class={"info-cards"}>
+                <Card>
                     <CardContent>
                     <Typography variant="h5" component="h2">
                         Task Overview

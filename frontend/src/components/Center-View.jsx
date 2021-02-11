@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
-
+import '../stylesheets/CenterView.css';
 
 export default class CenterView extends React.Component {
     constructor(props){

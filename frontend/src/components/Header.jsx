@@ -1,6 +1,6 @@
 import React from 'react';
 import * as PropTypes from "prop-types";
-
+import '../stylesheets/Header.css';
 export default class Header extends React.Component {
     constructor(props) {
         super(props);

@@ -1,0 +1,19 @@
+.info-cards {
+    display:grid;
+    margin-top: 45px;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.info-cards div {
+    margin-left: 5px;
+    width: 304px;
+    height: 158px;
+}
+
+.CircularProgressbar {
+    width: 100px;
+}
+
+.MuiCardContent-root h2 {
+    text-align: initial;
+}

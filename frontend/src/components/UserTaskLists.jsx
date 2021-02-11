@@ -9,7 +9,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
+import '../stylesheets/UserTaskLists.css';
 export default class UserTaskLists extends React.Component {
     constructor(props) {
         super(props);
