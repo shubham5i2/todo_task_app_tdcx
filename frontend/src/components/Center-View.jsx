@@ -64,7 +64,7 @@ export default class CenterView extends React.Component {
                 {
                     !isAddTask && displayType === 'no-tasks' && <>
                         <p>No Task Exists</p>
-                        <button onClick={this.addTask}>New Task</button>
+                        <button className={"loginButton"} onClick={this.addTask}>Add Task</button>
                     </>
                 }
                 {
@@ -114,7 +114,7 @@ export default class CenterView extends React.Component {
                             }}
                         />
                         <br/>
-                        <button onClick={this.addNewTask}>Submit</button>
+                        <button className={"loginButton"} onClick={this.addNewTask}>Add</button>
                     </>
                 }
             </div>
