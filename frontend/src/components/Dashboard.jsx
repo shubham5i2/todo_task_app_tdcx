@@ -15,14 +15,16 @@ import {
   import "react-circular-progressbar/dist/styles.css";
   
   import 'react-circular-progressbar/dist/styles.css';
+  import '../stylesheets/dashboard.css';
 const useStyles = makeStyles({
   gridContainer: {
     paddingLeft: "40px",
-    paddingRight: "40px"
+    paddingRight: "40px",
+    marginTop:"100px"
   },
   root: {
     minWidth: 200,
-    minHeight: 150
+    minHeight: 200
   },
   bullet: {
     display: "inline-block",
