@@ -7,6 +7,7 @@ import Header from './components/Header';
 import CenterView from './components/Center-View';
 import {get,post} from 'superagent';
 import UserTaskLists from './components/UserTaskLists';
+import Dashboard from './components/Dashboard';
 class App extends React.Component {
   constructor(){
     super();
@@ -21,6 +22,7 @@ class App extends React.Component {
     this.initiateAddNewTask = this.initiateAddNewTask.bind(this);
     this.updateTask = this.updateTask.bind(this);
     this.getUpdatedTasks = this.getUpdatedTasks.bind(this);
+    this.logoutUser = this.logoutUser.bind(this);
     //this.checkUserSession();
   }
   checkUserSession(){
@@ -31,6 +33,11 @@ class App extends React.Component {
         userId: data.body.userInfo.id,
         userLogin: true
       })
+    })
+  }
+  logoutUser(id){
+    this.setState({
+      userLogin: false
     })
   }
   makeUserLogin() {
@@ -79,7 +86,8 @@ class App extends React.Component {
     return (
       <div className="App">
         <header className="App-header" >
-          {userLogin && <Header loggedIn={userName} logo={userlogo}/>}  
+          {userLogin && <Header loggedIn={userName} logo={userlogo} logout={()=>{this.logoutUser(userId)}}/>}
+          {userLogin && <Dashboard />}  
           {userLogin && Array.isArray(userTasks) && userTasks.length > 0 && <UserTaskLists userTask={userTasks} loggedId={userId} taskUpdated={(isUpdated)=>this.updateTask(isUpdated)} addNewTask={(taskName) => {this.initiateAddNewTask(taskName)}}/>}
           {userLogin && Array.isArray(userTasks) && userTasks.length === 0 && <CenterView displayType={"no-tasks"} loggedId={userId} addNewTask={(taskName) => {this.initiateAddNewTask(taskName)}}/>}
           {!userLogin && <CenterView displayType={"login"} login={(id,name)=>{this.initiateLogin(id,name)}}/>}
