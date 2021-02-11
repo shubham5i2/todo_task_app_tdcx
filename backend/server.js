@@ -22,18 +22,50 @@ connection.once('open', function() {
 
 const Users = require('./tasks.model');
 
+var currentId = null;
 //login route
-todoRoutes.route('/login').post(function(req,res){
-    let user = new Users(req.body);
-    user.save()
-        .then(task => {
-            //req.session.userId = req.body.id;
-            localStorage.setItem('current-session',task.id);
-            res.status(200).send({userInfo:task})
-        })
-        .catch(err => {
-            res.status(400).send('adding new todo failed');
-        });
+todoRoutes.route('/').get(async function(req,res){
+    let currentSession = localStorage.getItem('current-session');
+    console.log("details of the session",currentSession);
+    if(currentSession!==null){
+
+        let userDetails = await Users.findOne({id:currentSession});
+        if(userDetails){
+            return res.status(200).send({userInfo:userDetails});
+        }
+        else {
+            return res.status(200).send({userInfo:null});
+        }
+    }
+})
+
+todoRoutes.route('/login').post(async function(req,res){
+    let userDetails = await Users.findOne({id:req.body.id});
+    if(userDetails){
+        if(userDetails.name === req.body.name) {
+            currentId = req.body.id;
+            return res.status(200).send({userInfo:userDetails});
+        }
+        else if(req.body.sessionExist) {
+            currentId = req.body.id;
+            return res.status(200).send({userInfo:userDetails});
+        }
+        else {
+            return res.status(400).send({msg:'Id exists! Please provide name associated with id to login'});
+        }
+    }
+    else {
+        let user = new Users(req.body);
+        user.save()
+            .then(task => {
+                //req.session.userId = req.body.id;
+                currentId = req.body.id;
+                res.status(200).send({msg:'New User Created',userInfo:task})
+            })
+            .catch(err => {
+                res.status(400).send('adding new User failed');
+            });
+    }
 });
 
 todoRoutes.route('/users').get(function(req,res){
@@ -63,9 +95,7 @@ todoRoutes.route('/dashboard').get(function(req,res){
 //tasks route added
 todoRoutes.route('/tasks').get(function(req,res){
     //let user = new Users(req.body);
-    let currentSession = localStorage.getItem('current-session');
-    console.log("details of the session",currentSession);
-    Users.findOne({id:currentSession},function(err,details){
+    Users.findOne({id:currentId},function(err,details){
         if(err){
             console.log('error occured');
         }
@@ -90,6 +120,67 @@ todoRoutes.route('/tasks').post(async function(req,res){
         });
     }
     
+});
+
+//update task routes
+todoRoutes.route('/tasks/:id').put(async function(req,res){
+    console.log(req.body,req.params);
+    currentId = req.body.loggedId;
+    let userDetails = await Users.findOne({id:req.body.loggedId});
+    let taskExists = [];//userDetails.tasks.filter(item=>item._id==req.params.id);
+    if(userDetails && userDetails.tasks && userDetails.tasks.length>0){
+        userDetails.tasks.map((item)=>{
+            if(item._id == req.params.id){
+                console.log("true");
+                item.isTaskCompleted = !item.isTaskCompleted;
+                taskExists.push(item);
+            }
+            else {
+                taskExists.push(item);
+            }
+        })
+        console.log(taskExists);
+        userDetails.tasks = taskExists;
+        Users.updateOne({id:req.body.loggedId},userDetails).then(details=>{
+            res.send({status:200,data:details});
+        });
+    }
+    else {
+        res.send({status:200,msg:'Updated route'});
+    }
+    
+});
+
+//delete task routes
+todoRoutes.route('/tasks/:id').delete(async function(req,res){
+    console.log(req.body,req.params);
+    currentId = req.body.loggedId;
+    let userDetails = await Users.findOne({id:req.body.loggedId});
+    let taskExists = [];//userDetails.tasks.filter(item=>item._id==req.params.id);
+    if(userDetails && userDetails.tasks && userDetails.tasks.length>0){
+        userDetails.tasks.map((item)=>{
+            if(item._id != req.params.id){
+                console.log("true");
+                taskExists.push(item);
+            }
+        })
+        console.log(taskExists);
+        userDetails.tasks = taskExists;
+        Users.updateOne({id:req.body.loggedId},userDetails).then(details=>{
+            res.send({status:200,data:details});
+        });
+    }
+    else {
+        res.send({status:200,msg:'Updated route'});
+    }
+    
+});
+
+todoRoutes.route('/logout').post(async function(req,res){
+    let currentSession = localStorage.getItem('current-session');
+    if(currentSession === req.body.id){
+        localStorage.setItem('current-session',null);
+    }
 });
 
 app.use('/',todoRoutes);

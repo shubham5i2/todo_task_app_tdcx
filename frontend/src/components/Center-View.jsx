@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
-
+import '../stylesheets/CenterView.css'
 
 export default class CenterView extends React.Component {
     constructor(props){
@@ -64,7 +64,7 @@ export default class CenterView extends React.Component {
                 {
                     !isAddTask && displayType === 'no-tasks' && <>
                         <p>No Task Exists</p>
-                        <button onClick={this.addTask}>New Task</button>
+                        <button className={"loginButton"} onClick={this.addTask}>Add Task</button>
                     </>
                 }
                 {
@@ -97,7 +97,7 @@ export default class CenterView extends React.Component {
                         />
                         <br/>
                         {this.state.formErrors && this.state.formErrors.msg ? <><span>{this.state.formErrors.msg}</span><br/></> : ''}
-                        <button onClick={this.logIn}>Submit</button>
+                        <button className={"loginButton"} onClick={this.logIn}>Submit</button>
                     </>
                 }
                 {
@@ -114,7 +114,7 @@ export default class CenterView extends React.Component {
                             }}
                         />
                         <br/>
-                        <button onClick={this.addNewTask}>Submit</button>
+                        <button className={"loginButton"} onClick={this.addNewTask}>Add</button>
                     </>
                 }
             </div>
