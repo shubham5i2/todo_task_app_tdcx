@@ -2,9 +2,9 @@
 const {LocalStorage} = require('node-localstorage');
 const express = require('express');
 //let session = require('express-session');
+var cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
-const cors = require('cors');
 const mongoose = require('mongoose');
 let localStorage = new LocalStorage('./scratch'); 
 const todoRoutes = express.Router();
@@ -23,21 +23,6 @@ connection.once('open', function() {
 const Users = require('./tasks.model');
 
 var currentId = null;
-//login route
-todoRoutes.route('/').get(async function(req,res){
-    let currentSession = localStorage.getItem('current-session');
-    console.log("details of the session",currentSession);
-    if(currentSession!==null){
-
-        let userDetails = await Users.findOne({id:currentSession});
-        if(userDetails){
-            return res.status(200).send({userInfo:userDetails});
-        }
-        else {
-            return res.status(200).send({userInfo:null});
-        }
-    }
-})
 
 todoRoutes.route('/login').post(async function(req,res){
     let userDetails = await Users.findOne({id:req.body.id});
@@ -80,8 +65,6 @@ todoRoutes.route('/users').get(function(req,res){
 
 //dashboard data route added
 todoRoutes.route('/dashboard').get(function(req,res){
-    console.log(req.body);
-    //let user = new Users(req.body);
     Users.findOne({id:req.body.id},function(err,details){
         if(err){
             console.log('error occured');
@@ -124,14 +107,12 @@ todoRoutes.route('/tasks').post(async function(req,res){
 
 //update task routes
 todoRoutes.route('/tasks/:id').put(async function(req,res){
-    console.log(req.body,req.params);
     currentId = req.body.loggedId;
     let userDetails = await Users.findOne({id:req.body.loggedId});
     let taskExists = [];//userDetails.tasks.filter(item=>item._id==req.params.id);
     if(userDetails && userDetails.tasks && userDetails.tasks.length>0){
         userDetails.tasks.map((item)=>{
             if(item._id == req.params.id){
-                console.log("true");
                 item.isTaskCompleted = !item.isTaskCompleted;
                 taskExists.push(item);
             }
@@ -139,7 +120,6 @@ todoRoutes.route('/tasks/:id').put(async function(req,res){
                 taskExists.push(item);
             }
         })
-        console.log(taskExists);
         userDetails.tasks = taskExists;
         Users.updateOne({id:req.body.loggedId},userDetails).then(details=>{
             res.send({status:200,data:details});
@@ -153,18 +133,15 @@ todoRoutes.route('/tasks/:id').put(async function(req,res){
 
 //delete task routes
 todoRoutes.route('/tasks/:id').delete(async function(req,res){
-    console.log(req.body,req.params);
     currentId = req.body.loggedId;
     let userDetails = await Users.findOne({id:req.body.loggedId});
     let taskExists = [];//userDetails.tasks.filter(item=>item._id==req.params.id);
     if(userDetails && userDetails.tasks && userDetails.tasks.length>0){
         userDetails.tasks.map((item)=>{
             if(item._id != req.params.id){
-                console.log("true");
                 taskExists.push(item);
             }
         })
-        console.log(taskExists);
         userDetails.tasks = taskExists;
         Users.updateOne({id:req.body.loggedId},userDetails).then(details=>{
             res.send({status:200,data:details});
