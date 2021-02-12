@@ -7,5 +7,26 @@
     margin-left:20px;
     margin-right:20px;
   }
+
+  .MuiDataGrid-root {
+    flex: 1;
+    color: rgba(0, 0, 0, 0.87);
+    height: 100%;
+    display: flex;
+    outline: none;
+    position: relative;
+    font-size: 0.875rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    line-height: 1.43;
+    flex-direction: column;
+    letter-spacing: 0.01071em;
+}
+
+.grid-container {
+  padding-left: 40px;
+  padding-right: 40px;
+  margin-top: 50px;
+}
   
   
