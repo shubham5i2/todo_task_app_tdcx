@@ -10,6 +10,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import '../stylesheets/UserTaskLists.css';
+import { Grid } from "@material-ui/core";
 export default class UserTaskLists extends React.Component {
     constructor(props) {
         super(props);
@@ -136,10 +137,17 @@ export default class UserTaskLists extends React.Component {
             rows.push({"id":tasks._id || "task","taskname":tasks.task_name,"taskstatus":tasks.isTaskCompleted?'Completed':'Not Completed'});
         });
         return (
-            <>
+          <>
+          <Grid container style={{marginTop:"10px"}}>
+            <Grid item sm>
+              <p style={{color:'black',fontSize:"16px"}}>Tasks</p>
+            </Grid>
+            <Grid item sm>
             <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
               Add New Task
             </Button>
+            </Grid>
+          </Grid>
             <Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title">
               <DialogTitle id="form-dialog-title">Add New Task</DialogTitle>
               <DialogContent>
@@ -165,10 +173,12 @@ export default class UserTaskLists extends React.Component {
                 </Button>
               </DialogActions>
             </Dialog>
-            <div style={{ height: 400, width: '100%' }}>
+            <div style={{ height: 400, width: '75%' }}>
                 <DataGrid rows={rows} columns={columns} pageSize={5} checkboxSelection />
             </div>
             </>
+            
+            
         )
     }
 }
