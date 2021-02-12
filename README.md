@@ -10,7 +10,7 @@
 2. Install the dependencies by running -- npm i
 3. Make sure you have the MongoDb installed and running.
 4. Start the backend server by running the command -- node server.js
-
+![image](backend/images/nodeserver.png)
 
 # Frontend:
 
